@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class HomeController < ApplicationController
-  before_action :set_post, only: [:show, :edit, :update, :destroy]
-  before_action :require_login, only: [:new, :create]
+  before_action :set_post, only: %i[show edit update destroy]
+  before_action :require_login, only: %i[new create]
   # GET /posts
   # GET /posts.json
   def index
@@ -9,18 +11,15 @@ class HomeController < ApplicationController
 
   # GET /posts/1
   # GET /posts/1.json
-  def show
-  end
+  def show; end
 
   # GET /posts/new
   def new
-
     @post = Post.new
   end
 
   # GET /posts/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /posts
   # POST /posts.json
@@ -63,22 +62,25 @@ class HomeController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_post
-      @post = Post.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def post_params
-      params.require(:post).permit(:title, :body, :user_id)
-    end
-    def require_login
-      unless logged_in?
-        flash[:error] = "You must be logged in to access this section"
-        redirect_to login_url # halts request cycle
-      end
-    end
-    def logged_in?
-      !current_user.nil?
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_post
+    @post = Post.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def post_params
+    params.require(:post).permit(:title, :body, :user_id)
+  end
+
+  def require_login
+    return if logged_in?
+
+    flash[:error] = 'You must be logged in to access this section'
+    redirect_to login_url # halts request cycle
+  end
+
+  def logged_in?
+    !current_user.nil?
+  end
 end

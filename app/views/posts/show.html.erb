@@ -9,6 +9,11 @@
   <strong>Content:</strong>
   <%= @post.content %>
 </p>
-
+<div>
+  <%= @post.comments.count %> Comments
+  <%= render @post.comments %>
+  Leave a reply
+  <%= render 'comments/form' %>
+</div>
 <%= link_to 'Edit', edit_post_path(@post) %> |
 <%= link_to 'Back', posts_path %>
