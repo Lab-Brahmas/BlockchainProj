@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class HomeController < ApplicationController
+class PostsController < ApplicationController
   before_action :set_post, only: %i[show edit update destroy]
-  before_action :require_login, only: %i[new create]
+
   # GET /posts
   # GET /posts.json
   def index
@@ -28,7 +28,7 @@ class HomeController < ApplicationController
 
     respond_to do |format|
       if @post.save
-        format.html { redirect_to posts_url, notice: 'Post was successfully created.' }
+        format.html { redirect_to @post, notice: 'Post was successfully created.' }
         format.json { render :show, status: :created, location: @post }
       else
         format.html { render :new }
@@ -70,17 +70,12 @@ class HomeController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def post_params
-    params.require(:post).permit(:title, :body, :user_id)
+    params.require(:post).permit(:title, :content, :user_id)
   end
 
-  def require_login
-    return if logged_in?
-
-    flash[:error] = 'You must be logged in to access this section'
-    redirect_to login_url # halts request cycle
-  end
-
-  def logged_in?
-    !current_user.nil?
+  def correct_user
+    @post = Post.find(params[:id])
+    @creator = User.find(@post.user_id)
+    redirect_to(root_url) unless current_user?(@creator)
   end
 end
